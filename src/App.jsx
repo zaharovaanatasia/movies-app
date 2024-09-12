@@ -2,12 +2,12 @@ import './App.css';
 import MoviesList from './components/MoviesList';
 import { Layout } from 'antd';
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 function App() {
   return (
     <Layout>
-      <Content style={{ padding: '20px' }}>
+      <Content>
         <MoviesList />
       </Content>
     </Layout>

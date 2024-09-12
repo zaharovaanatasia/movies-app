@@ -1,0 +1,12 @@
+
+.movies-list-container {
+  width: 1010px;
+  height: 100%;
+  left: 215px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+   padding: 18px;
+   gap: 0;
+}

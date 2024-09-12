@@ -1,31 +1,55 @@
 import Movie from './Movie';
 import { Row, Col } from 'antd';
-
-const movies = [
-  {
-    id: 1,
-    title: 'The Way Back',
-    release_date: 'March 5, 2020',
-    genres: ['Action', 'Drama'],
-    overview: 'A former basketball all-star, who has lost his wife and family foundation...',
-    poster_path: 'https://image.tmdb.org/t/p/w500/path/to/poster1.jpg', // Замените на реальный путь
-  },
-  {
-    id: 2,
-    title: 'Another Movie',
-    release_date: 'April 10, 2020',
-    genres: ['Drama', 'Thriller'],
-    overview: 'A gripping tale of survival and determination...',
-    poster_path: 'https://image.tmdb.org/t/p/w500/path/to/poster2.jpg', 
-  },
-];
+import { useState, useEffect } from 'react';
+import './MoviesList.css';
 
 const MoviesList = () => {
+  const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const API_KEY = '1a2b96f291c61ca53ff512f515be0737';
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [moviesResponse, genresResponse] = await Promise.all([
+          fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`),
+          fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${API_KEY}`),
+        ]);
+
+        if (!moviesResponse.ok || !genresResponse.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const [moviesData, genresData] = await Promise.all([moviesResponse.json(), genresResponse.json()]);
+
+        setMovies(moviesData.results);
+        setGenres(genresData.genres);
+      } catch (error) {
+        console.error('Ошибка при получении данных:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Загрузка...</div>;
+  }
+
   return (
-    <Row gutter={[2, 3]}>
-      {movies.map((movie) => (
-        <Col key={movie.id}>
-          <Movie movie={movie} />
+    <Row gutter={[0,0]} className="movies-list-container">
+      {movies.slice(0, 6).map((movie) => (
+        <Col key={movie.id} span={12}>
+          <Movie
+            title={movie.title}
+            overview={movie.overview}
+            release_date={movie.release_date}
+            genre_ids={movie.genre_ids || []}
+            poster_path={movie.poster_path}
+            genres={genres}
+          />
         </Col>
       ))}
     </Row>
