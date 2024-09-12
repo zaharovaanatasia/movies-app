@@ -1,5 +1,5 @@
 import './App.css';
-import MoviesList from './components/MoviesList';
+import MoviesList from './components/MoviesList/MoviesList';
 import { Layout } from 'antd';
 
 const { Content } = Layout;
