@@ -7,6 +7,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   margin: 18px;
   display: flex;
+  flex-direction: row;
 }
 
 .movie__row {
@@ -19,6 +20,7 @@
   margin: 0;
   overflow: hidden;
   border-radius: 8px;
+  white-space: nowrap;
 }
 
 .movie__poster {
@@ -62,6 +64,7 @@ p {
   margin-inline-end: 0px;
   unicode-bidi: isolate;
 }
+
 .movie__genres {
   display: flex;
   flex-wrap: wrap;
@@ -71,10 +74,15 @@ p {
   padding-right: 20px;
 }
 
-.movie__genre-badge {
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  padding: 2px 5px;
-  font-size: 14px;
-  color: #333;
+.movie__rating-circle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
 }

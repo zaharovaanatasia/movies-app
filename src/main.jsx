@@ -1,9 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App.jsx';
+import App from './components/App/App';
+import { GenresProvider } from './components/GenresContext';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <GenresProvider>
+      <App />
+    </GenresProvider>
   </StrictMode>
 );
