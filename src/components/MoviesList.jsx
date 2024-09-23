@@ -7,7 +7,7 @@ const MoviesList = ({ movies, onChangeRating, genres }) => {
   return (
     <>
       <Row gutter={[16, 16]}>
-        {movies.slice(0, 6).map((movie) => (
+        {movies.map((movie) => (
           <Col
             key={movie.id}
             xs={24}

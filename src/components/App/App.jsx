@@ -27,12 +27,15 @@ function App() {
   const onloadMovies = async (query, page) => {
     setLoading(true);
     setError(null);
+    console.log(`Loading movies for query: "${query}" on page: ${page}`);
 
     try {
       const data = await FetchMovies(query, page);
+      console.log(`Movies fetched: ${data.results.length} results on page ${page}`);
       setMovies(data.results.map((movie) => ({ ...movie, rating: 0 })));
       setTotal(data.total_pages);
     } catch (error) {
+      console.error('Error fetching movies:', error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -45,9 +48,11 @@ function App() {
     const initializeGuestSession = async () => {
       try {
         const sessionId = await CreateGuestSession();
+        console.log('Guest session created:', sessionId);
         setGuestSessionId(sessionId);
       } catch (error) {
-        setError('Не удалось создать гостевую сессию', error);
+        console.error('Failed to create guest session:', error);
+        setError('Не удалось создать гостевую сессию');
       }
     };
 
@@ -56,24 +61,33 @@ function App() {
 
   // обновление поиска
   const onSearch = (query) => {
+    console.log(`Search query updated: "${query}"`);
     setSearchQuery(query);
     setCurrentPage(1);
   };
 
   // переключение страниц
   const onPageChange = (page) => {
+    console.log(`Page changed to: ${page}`);
     setCurrentPage(page);
+
+    if (mode === 'rated') {
+      onLoadRatedMovies(guestSessionId, page);
+    }
   };
 
   // изменения рейтинга
   const onChangeRating = async (movieId, newRating) => {
+    console.log(`Changing rating for movie ID ${movieId} to ${newRating}`);
     try {
       await RateMovie(movieId, newRating, guestSessionId);
       setMovies((prevMovies) =>
         prevMovies.map((movie) => (movie.id === movieId ? { ...movie, rating: newRating } : movie))
       );
+      console.log(`Successfully rated movie ID ${movieId} with rating ${newRating}`);
     } catch (error) {
-      setError('Не удалось сохранить рейтинг', error);
+      console.error('Failed to save rating:', error);
+      setError('Не удалось сохранить рейтинг');
     }
   };
 
@@ -81,14 +95,18 @@ function App() {
   const onLoadRatedMovies = async (guestSessionId, page) => {
     setLoading(true);
     setError(null);
+    console.log(`Loading rated movies for guest session ID: ${guestSessionId} on page: ${page}`);
 
     try {
       const data = await FetchRatedMovies(guestSessionId, page);
+      console.log(`Rated movies fetched: ${data.results.length} results on page ${page}`);
       setRatedMovies(data.results);
-      setTotal(data.total_pages);
+      setTotal(data.total_results);
       setCurrentPage(page);
+      console.log(`Rated movies fetched: ${data.results.length} results on page ${page}`);
     } catch (error) {
-      setError('Не удалось загрузить оценённые фильмы', error);
+      console.error('Failed to load rated movies:', error);
+      setError('Не удалось загрузить оценённые фильмы');
     } finally {
       setLoading(false);
     }
@@ -119,6 +137,7 @@ function App() {
   }
 
   const handleTabChange = (key) => {
+    console.log(`Tab changed to: ${key}`);
     setMode(key === '1' ? 'search' : 'rated');
     setActiveKey(key);
     setCurrentPage(1);
