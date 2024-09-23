@@ -1,18 +1,25 @@
-import Movie from '../Movie/Movie';
+import Movie from './Movie';
 import { Row, Col } from 'antd';
 import PropTypes from 'prop-types';
-import './MoviesList.css';
-import { truncateText } from '../../utils';
+import { truncateText } from '../utils';
 
 const MoviesList = ({ movies, onChangeRating, genres }) => {
   return (
     <>
-      <Row className="movies-list-container">
+      <Row gutter={[16, 16]}>
         {movies.slice(0, 6).map((movie) => (
-          <Col key={movie.id} span={12}>
+          <Col
+            key={movie.id}
+            xs={24}
+            sm={24}
+            md={24}
+            lg={12}
+            xl={12}
+            style={{ display: 'flex', justifyContent: 'center' }}
+          >
             <Movie
-              title={movie.title}
-              overview={truncateText(movie.overview, 250)}
+              title={truncateText(movie.title, 35)}
+              overview={truncateText(movie.overview, 180)}
               release_date={movie.release_date}
               poster_path={movie.poster_path}
               rating={movie.rating}

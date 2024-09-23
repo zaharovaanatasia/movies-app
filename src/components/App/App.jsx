@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
-import { Layout, Spin, Alert, Radio } from 'antd';
+import { Layout, Spin, Alert, Tabs } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import { debounce } from 'lodash';
-import MoviesList from '../MoviesList/MoviesList';
-import NewMoviesSearch from '../NewMoviesSearch/NewMoviesSearch';
-import PaginationPages from '../PaginationPages/PaginationPages';
-import { FetchMovies, CreateGuestSession } from '../../api';
+import MoviesList from '../MoviesList';
+import NewMoviesSearch from '../NewMoviesSearch';
+import PaginationPages from '../PaginationPages';
+import { FetchMovies, CreateGuestSession, RateMovie, FetchRatedMovies } from '../../api';
 import { GenresContext } from '../GenresContext';
 import '../App/App.css';
 
@@ -18,10 +18,13 @@ function App() {
   const [total, setTotal] = useState(0);
   const [guestSessionId, setGuestSessionId] = useState(null);
   const [mode, setMode] = useState('search');
-  
+  const [ratedMovies, setRatedMovies] = useState([]);
+  const [activeKey, setActiveKey] = useState('1');
+
   const genres = useContext(GenresContext);
 
-  const loadMovies = async (query, page) => {
+  // загрузка фильмов
+  const onloadMovies = async (query, page) => {
     setLoading(true);
     setError(null);
 
@@ -36,7 +39,7 @@ function App() {
     }
   };
 
-  const debouncedLoadMovies = debounce(loadMovies, 1000);
+  const debouncedLoadMovies = debounce(onloadMovies, 1000);
 
   useEffect(() => {
     const initializeGuestSession = async () => {
@@ -51,28 +54,57 @@ function App() {
     initializeGuestSession();
   }, []);
 
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      debouncedLoadMovies(searchQuery, currentPage);
-    } else {
-      loadMovies('', currentPage);
-    }
-  }, [searchQuery, currentPage]);
-
-  const handleSearch = (query) => {
+  // обновление поиска
+  const onSearch = (query) => {
     setSearchQuery(query);
     setCurrentPage(1);
   };
 
-  const handlePageChange = (page) => {
+  // переключение страниц
+  const onPageChange = (page) => {
     setCurrentPage(page);
   };
 
-  const handleRatingChange = (movieId, newRating) => {
-    setMovies((prevMovies) =>
-      prevMovies.map((movie) => (movie.id === movieId ? { ...movie, rating: newRating } : movie))
-    );
+  // изменения рейтинга
+  const onChangeRating = async (movieId, newRating) => {
+    try {
+      await RateMovie(movieId, newRating, guestSessionId);
+      setMovies((prevMovies) =>
+        prevMovies.map((movie) => (movie.id === movieId ? { ...movie, rating: newRating } : movie))
+      );
+    } catch (error) {
+      setError('Не удалось сохранить рейтинг', error);
+    }
   };
+
+  // загрузка оцененных фильмов
+  const onLoadRatedMovies = async (guestSessionId, page) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await FetchRatedMovies(guestSessionId, page);
+      setRatedMovies(data.results);
+      setTotal(data.total_pages);
+      setCurrentPage(page);
+    } catch (error) {
+      setError('Не удалось загрузить оценённые фильмы', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (mode === 'search') {
+      if (searchQuery.trim()) {
+        debouncedLoadMovies(searchQuery, currentPage);
+      } else {
+        onloadMovies('', currentPage);
+      }
+    } else if (mode === 'rated' && guestSessionId) {
+      onLoadRatedMovies(guestSessionId, currentPage);
+    }
+  }, [searchQuery, currentPage, mode, guestSessionId]);
 
   if (loading) {
     return <Spin style={{ display: 'block', margin: '20px auto' }} />;
@@ -86,35 +118,64 @@ function App() {
     return <Alert message="Нет результатов" description="Попробуйте изменить запрос" type="info" showIcon />;
   }
 
+  const handleTabChange = (key) => {
+    setMode(key === '1' ? 'search' : 'rated');
+    setActiveKey(key);
+    setCurrentPage(1);
+
+    if (key === '2') {
+      onLoadRatedMovies(guestSessionId, 1);
+    }
+  };
+
+  const items = [
+    {
+      key: '1',
+      label: 'Search',
+      children: (
+        <>
+          <NewMoviesSearch onSearch={onSearch} style={{ marginBottom: 15 }} />
+          <MoviesList
+            movies={movies}
+            loading={loading}
+            error={error}
+            total={total}
+            onChangeRating={onChangeRating}
+            genres={genres}
+          />
+          <PaginationPages currentPage={currentPage} total={total} onPageChange={onPageChange} />
+        </>
+      ),
+    },
+    {
+      key: '2',
+      label: 'Rated',
+      children: (
+        <>
+          <MoviesList
+            movies={ratedMovies}
+            loading={loading}
+            error={error}
+            total={total}
+            genres={genres}
+            onChangeRating={onChangeRating}
+          />
+          <PaginationPages currentPage={currentPage} total={total} onPageChange={onPageChange} />
+        </>
+      ),
+    },
+  ];
+
   return (
     <Layout>
-      <Content>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-          <Radio.Group defaultValue="search" buttonStyle="solid" onChange={(e) => setMode(e.target.value)}>
-            <Radio.Button value="search">Search</Radio.Button>
-            <Radio.Button value="rated">Rated</Radio.Button>
-          </Radio.Group>
-        </div>
-
-        {mode === 'search' ? (
-          <>
-            <NewMoviesSearch onSearch={handleSearch} />
-            <MoviesList
-              movies={movies}
-              loading={loading}
-              error={error}
-              total={total}
-              onChangeRating={handleRatingChange}
-              genres={genres}
-            />
-            <PaginationPages current={currentPage} total={total * 10} onPageChange={handlePageChange}></PaginationPages>
-          </>
-        ) : (
-          <>
-            <MoviesList movies={movies} loading={loading} error={error} total={total} genres={genres} />
-            <PaginationPages current={currentPage} total={total} onPageChange={handlePageChange}></PaginationPages>
-          </>
-        )}
+      <Content
+        style={{
+          maxWidth: '1130px',
+          margin: '0 auto',
+          padding: '0 15px',
+        }}
+      >
+        <Tabs activeKey={activeKey} centered items={items} onChange={handleTabChange} />
       </Content>
     </Layout>
   );

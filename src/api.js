@@ -33,10 +33,10 @@ export const FetchGenres = async () => {
 };
 
 export const CreateGuestSession = async () => {
-  const guestSessionId = localStorage.getItem('guestSessionId');
+  const storedSession = JSON.parse(localStorage.getItem('guestSession'));
 
-  if (guestSessionId) {
-    return guestSessionId;
+  if (storedSession && Date.now() - storedSession.timestamp < 24 * 60 * 60 * 1000) {
+    return storedSession.guestSessionId;
   }
 
   try {
@@ -47,13 +47,55 @@ export const CreateGuestSession = async () => {
     }
 
     const data = await response.json();
-
     const newGuestSessionId = data.guest_session_id;
 
-    localStorage.setItem('guestSessionId', newGuestSessionId);
+    // Сохраняем новый ID и текущее время в localStorage
+    localStorage.setItem(
+      'guestSession',
+      JSON.stringify({
+        guestSessionId: newGuestSessionId,
+        timestamp: Date.now(),
+      })
+    );
+
     return newGuestSessionId;
   } catch (error) {
     console.error(error);
     throw new Error('Не удалось получить id гостевой сессии');
   }
+};
+
+export const RateMovie = async (movieId, rating, guestSessionId) => {
+  const url = `${BASE_URL}/movie/${movieId}/rating?api_key=${API_KEY}&guest_session_id=${guestSessionId}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+    body: JSON.stringify({ value: rating }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Не удалось оценить фильм');
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export const FetchRatedMovies = async (guestSessionId, page) => {
+  const url = `${BASE_URL}/guest_session/${guestSessionId}/rated/movies?api_key=${API_KEY}&page=${page}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('Ошибка при загрузке оцененных фильмов');
+  }
+
+  const data = await response.json();
+
+  return {
+    results: data.results,
+    total_pages: data.total_pages,
+  };
 };
