@@ -122,7 +122,7 @@ function App() {
     } else if (mode === 'rated' && guestSessionId) {
       onLoadRatedMovies(guestSessionId, currentPage);
     }
-  }, [searchQuery, currentPage, mode, guestSessionId]);
+  }, [searchQuery, currentPage, mode, guestSessionId, debouncedLoadMovies]);
 
   if (loading) {
     return <Spin style={{ display: 'block', margin: '20px auto' }} />;

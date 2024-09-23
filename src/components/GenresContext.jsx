@@ -12,7 +12,7 @@ export const GenresProvider = ({ children }) => {
       try {
         const data = await FetchGenres();
         setGenres(data);
-            } catch (error) {
+      } catch (error) {
         console.error('Ошибка получения жанров:', error);
       }
     };
