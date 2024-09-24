@@ -1,3 +1,5 @@
+import { notification } from 'antd';
+
 // формат даты
 export const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -25,4 +27,14 @@ export const truncateText = (text, maxLength) => {
   const truncated = text.slice(0, maxLength);
   const lastSpaceIndex = truncated.lastIndexOf(' ');
   return `${truncated.slice(0, lastSpaceIndex)}...`;
+};
+
+export const showErrorNotification = (message) => {
+  notification.error({
+    message: 'Ошибка',
+    description: message,
+    placement: 'topRight',
+    duration: 5,
+    closeable: true,
+  });
 };

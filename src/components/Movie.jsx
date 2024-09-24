@@ -2,17 +2,16 @@ import { Card, Row, Col, Tag, Progress, Image } from 'antd';
 import PropTypes from 'prop-types';
 import StarRating from './StarRating';
 import { formatDate, getRatingColor } from '../utils';
+import { BASE_URL_IMG, URL_POSTER } from '../api.js';
 
 const { Meta } = Card;
 
 const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRating, genres }) => {
-  const baseUrl = 'https://image.tmdb.org/t/p/w500';
-
   return (
     <Card
       hoverable
       style={{
-        maxWidth: 550,
+        width: 550,
         height: 290,
         marginBottom: 10,
         marginLeft: 10,
@@ -25,18 +24,29 @@ const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRat
           {poster_path ? (
             <Image
               alt={title}
-              src={`${baseUrl}${poster_path}`}
+              src={`${BASE_URL_IMG}${poster_path}`}
               style={{
                 width: 'auto',
-                height: '250px',
+                height: 250,
                 maxWidth: '100%',
-                borderRadius: '10px',
-                paddingRight: '5px',
+                borderRadius: 10,
+                paddingRight: 5,
                 objectFit: 'cover',
               }}
             />
           ) : (
-            <div>Нет постера</div>
+            <Image
+              alt={'Нет постера'}
+              src={URL_POSTER}
+              style={{
+                width: 'auto',
+                height: 250,
+                maxWidth: '100%',
+                borderRadius: 10,
+                paddingRight: 5,
+                objectFit: 'cover',
+              }}
+            />
           )}
         </Col>
         <Col xs={24} sm={16}>

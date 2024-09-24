@@ -1,5 +1,8 @@
 const API_KEY = '1a2b96f291c61ca53ff512f515be0737';
 const BASE_URL = 'https://api.themoviedb.org/3';
+export const BASE_URL_IMG = 'https://image.tmdb.org/t/p/w500';
+export const URL_POSTER =
+  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAaAO5JHfvhFKTdXGL4JH9_tn069t0Tv221A&s';
 
 export const FetchMovies = async (query, page) => {
   const url = query
@@ -49,7 +52,6 @@ export const CreateGuestSession = async () => {
     const data = await response.json();
     const newGuestSessionId = data.guest_session_id;
 
-    // Сохраняем новый ID и текущее время в localStorage
     localStorage.setItem(
       'guestSession',
       JSON.stringify({
@@ -86,16 +88,14 @@ export const RateMovie = async (movieId, rating, guestSessionId) => {
 
 export const FetchRatedMovies = async (guestSessionId, page) => {
   const url = `${BASE_URL}/guest_session/${guestSessionId}/rated/movies?api_key=${API_KEY}&page=${page}`;
-
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Ошибка при загрузке оцененных фильмов');
   }
-
   const data = await response.json();
-
   return {
     results: data.results,
     total_pages: data.total_pages,
+    total_results: data.total_results,
   };
 };

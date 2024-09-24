@@ -1,14 +1,13 @@
 import { Pagination } from 'antd';
 import PropTypes from 'prop-types';
 
-const PaginationPages = ({ currentPage, total, onPageChange }) => {
+const PaginationPages = ({ currentPage, total, onPageChange, mode }) => {
   return (
     <Pagination
       align="center"
       current={currentPage}
-      total={total}
+      total={mode === 'rated' ? total * 10 : total}
       onChange={onPageChange}
-      pageSize={6}
       showSizeChanger={false}
     />
   );
@@ -17,5 +16,6 @@ PaginationPages.propTypes = {
   currentPage: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
+  mode: PropTypes.string.isRequired,
 };
 export default PaginationPages;
