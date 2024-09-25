@@ -82,8 +82,13 @@ function App() {
   const onChangeRating = async (movieId, newRating) => {
     try {
       await RateMovie(movieId, newRating, guestSessionId);
+
       setMovies((prevMovies) =>
         prevMovies.map((movie) => (movie.id === movieId ? { ...movie, rating: newRating } : movie))
+      );
+
+      setRatedMovies((prevRatedMovies) =>
+        prevRatedMovies.map((movie) => (movie.id === movieId ? { ...movie, rating: newRating } : movie))
       );
 
       localStorage.setItem(`movie_${movieId}_rating`, newRating);
@@ -126,7 +131,9 @@ function App() {
   }
 
   if (!movies.length) {
-    return <Alert message="Нет результатов" description="Попробуйте изменить запрос" type="info" showIcon />;
+    return (
+      <Alert message="Нет результатов" description="Попробуйте изменить запрос" type="info" showIcon closable={true} />
+    );
   }
 
   const handleTabChange = (key) => {

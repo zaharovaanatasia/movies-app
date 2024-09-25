@@ -21,7 +21,8 @@ const MoviesList = ({ movies, onChangeRating, genres }) => {
             overview={truncateText(movie.overview, 165)}
             release_date={movie.release_date}
             poster_path={movie.poster_path}
-            rating={movie.rating}
+            rating={movie.vote_average}
+            userRating={movie.rating}
             genres={genres.filter((genre) => movie.genre_ids.includes(genre.id))}
             onChangeRating={(newRating) => onChangeRating(movie.id, newRating)}
           />

@@ -6,7 +6,7 @@ import { BASE_URL_IMG, URL_POSTER } from '../api.js';
 
 const { Meta } = Card;
 
-const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRating, genres }) => {
+const Movie = ({ title, overview, release_date, poster_path, rating, userRating, onChangeRating, genres }) => {
   return (
     <Card
       hoverable
@@ -67,7 +67,7 @@ const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRat
         </Col>
       </Row>
       <Row justify="start" style={{ position: 'absolute', bottom: '10px', right: '10px', paddingTop: '15px' }}>
-        <StarRating rating={rating} onChangeRating={onChangeRating} />
+        <StarRating rating={userRating} onChangeRating={onChangeRating} />
       </Row>
       <div style={{ position: 'absolute', top: '20px', right: '20px' }}>
         <Progress
@@ -88,6 +88,7 @@ Movie.propTypes = {
   release_date: PropTypes.string,
   poster_path: PropTypes.string,
   rating: PropTypes.number,
+  userRating: PropTypes.number,
   onChangeRating: PropTypes.func,
   genres: PropTypes.array,
 };
