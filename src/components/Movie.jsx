@@ -11,23 +11,23 @@ const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRat
     <Card
       hoverable
       style={{
-        width: 550,
-        height: 290,
-        marginBottom: 10,
-        marginLeft: 10,
+        width: '100%',
+        maxWidth: 530,
+        height: 'auto',
+        margin: '10px auto',
         borderRadius: '10px',
         boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)',
       }}
     >
-      <Row gutter={[24, 24]}>
-        <Col xs={24} sm={8} style={{ padding: 0 }}>
+      <Row gutter={[16, 16]} style={{ height: '100%' }} wrap={true}>
+        <Col xs={5} sm={8} md={8} style={{ padding: 0 }}>
           {poster_path ? (
             <Image
               alt={title}
               src={`${BASE_URL_IMG}${poster_path}`}
               style={{
                 width: 'auto',
-                height: 250,
+                maxHeight: 250,
                 maxWidth: '100%',
                 borderRadius: 10,
                 paddingRight: 5,
@@ -49,7 +49,7 @@ const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRat
             />
           )}
         </Col>
-        <Col xs={24} sm={16}>
+        <Col xs={18} sm={16} md={16} style={{ display: 'flex', flexDirection: 'column', padding: '0 10px' }}>
           <Meta
             title={<span>{title}</span>}
             description={
@@ -60,14 +60,14 @@ const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRat
                     <Tag key={genre.id}>{genre.name}</Tag>
                   ))}
                 </div>
-                <p>{overview}</p>
-                <Row justify="start" style={{ position: 'absolute', bottom: 10 }}>
-                  <StarRating rating={rating} onChangeRating={onChangeRating} />
-                </Row>
+                <p style={{ marginTop: '10px' }}>{overview}</p>
               </>
             }
           />
         </Col>
+      </Row>
+      <Row justify="start" style={{ position: 'absolute', bottom: '10px', right: '10px' }}>
+        <StarRating rating={rating} onChangeRating={onChangeRating} />
       </Row>
       <div style={{ position: 'absolute', top: '15px', right: '15px' }}>
         <Progress

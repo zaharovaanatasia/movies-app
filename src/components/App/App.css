@@ -1,0 +1,9 @@
+.input-margin {
+  margin-bottom: 30px;
+}
+
+@media (max-width: 1023px) {
+  .input-margin {
+    margin-bottom: 0;
+  }
+}

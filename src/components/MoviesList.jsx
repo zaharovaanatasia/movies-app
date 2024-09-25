@@ -18,7 +18,7 @@ const MoviesList = ({ movies, onChangeRating, genres }) => {
         >
           <Movie
             title={truncateText(movie.title, 35)}
-            overview={truncateText(movie.overview, 180)}
+            overview={truncateText(movie.overview, 170)}
             release_date={movie.release_date}
             poster_path={movie.poster_path}
             rating={movie.rating}

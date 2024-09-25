@@ -16,7 +16,7 @@ const NewMoviesSearch = ({ onSearch }) => {
       value={query}
       onChange={onInputChange}
       allowClear
-      style={{ marginBottom: '30px' }}
+      className="input-margin"
     />
   );
 };
