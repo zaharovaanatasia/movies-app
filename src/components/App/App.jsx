@@ -46,7 +46,7 @@ function App() {
     }
   };
 
-  const debouncedLoadMovies = debounce(onloadMovies, 2000);
+  const debouncedLoadMovies = debounce(onloadMovies, 1000);
 
   useEffect(() => {
     const initializeGuestSession = async () => {

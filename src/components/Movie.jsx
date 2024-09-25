@@ -69,7 +69,7 @@ const Movie = ({ title, overview, release_date, poster_path, rating, onChangeRat
           />
         </Col>
       </Row>
-      <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+      <div style={{ position: 'absolute', top: '15px', right: '15px' }}>
         <Progress
           type="circle"
           percent={rating ? (rating / 10) * 100 : 0}
