@@ -3,10 +3,15 @@ import PropTypes from 'prop-types';
 import StarRating from './StarRating';
 import { formatDate, getRatingColor } from '../utils';
 import { BASE_URL_IMG, URL_POSTER } from '../api.js';
+import { useContext } from 'react';
+import { GenresContext } from './GenresContext.jsx';
 
 const { Meta } = Card;
 
-const Movie = ({ title, overview, release_date, poster_path, rating, userRating, onChangeRating, genres }) => {
+const Movie = ({ title, overview, release_date, poster_path, rating, userRating, onChangeRating, genre_ids }) => {
+  const genres = useContext(GenresContext);
+  const movieGenres = genres.filter((genre) => genre_ids.includes(genre.id));
+ 
   return (
     <Card
       hoverable
@@ -56,7 +61,7 @@ const Movie = ({ title, overview, release_date, poster_path, rating, userRating,
               <>
                 <p style={{ margin: '7px 0' }}>{formatDate(release_date)}</p>
                 <div>
-                  {genres.map((genre) => (
+                  {movieGenres.map((genre) => (
                     <Tag key={genre.id}>{genre.name}</Tag>
                   ))}
                 </div>
@@ -90,7 +95,7 @@ Movie.propTypes = {
   rating: PropTypes.number,
   userRating: PropTypes.number,
   onChangeRating: PropTypes.func,
-  genres: PropTypes.array,
+  genre_ids: PropTypes.array,
 };
 
 export default Movie;

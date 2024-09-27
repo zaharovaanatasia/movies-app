@@ -18,7 +18,7 @@ export const GenresProvider = ({ children }) => {
     };
     loadGenres();
   }, []);
-
+ 
   return <GenresContext.Provider value={genres}>{children}</GenresContext.Provider>;
 };
 

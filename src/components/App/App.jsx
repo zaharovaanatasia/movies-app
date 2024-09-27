@@ -20,6 +20,8 @@ function App() {
   const [mode, setMode] = useState('search');
   const [ratedMovies, setRatedMovies] = useState([]);
   const [activeKey, setActiveKey] = useState('1');
+  
+  
   const genres = useContext(GenresContext);
 
   // загрузка фильмов

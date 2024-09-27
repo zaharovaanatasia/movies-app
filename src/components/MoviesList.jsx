@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 import PropTypes from 'prop-types';
 import { truncateText } from '../utils';
 
-const MoviesList = ({ movies, onChangeRating, genres }) => {
+const MoviesList = ({ movies, onChangeRating }) => {
   return (
     <Row gutter={[16, 16]}>
       {movies.map((movie) => (
@@ -23,7 +23,7 @@ const MoviesList = ({ movies, onChangeRating, genres }) => {
             poster_path={movie.poster_path}
             rating={movie.vote_average}
             userRating={movie.rating}
-            genres={genres.filter((genre) => movie.genre_ids.includes(genre.id))}
+            genre_ids={movie.genre_ids}
             onChangeRating={(newRating) => onChangeRating(movie.id, newRating)}
           />
         </Col>
@@ -35,7 +35,6 @@ const MoviesList = ({ movies, onChangeRating, genres }) => {
 MoviesList.propTypes = {
   movies: PropTypes.array.isRequired,
   onChangeRating: PropTypes.func.isRequired,
-  genres: PropTypes.array.isRequired,
 };
 
 export default MoviesList;
